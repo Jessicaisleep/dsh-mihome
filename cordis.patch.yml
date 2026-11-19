@@ -3,7 +3,7 @@
 # (e.g. pythonPath, dataDir) — later layers win per row.
 - insert:
     - id: mihome
-      name: 'dsh-mihome'
+      name: '@jessicaisleep/dsh-mihome'
       config:
         # 桥接用的 Python 解释器。留空 = 插件自带的 .venv
         # （Windows: .venv\Scripts\python.exe；其它平台: .venv/bin/python）
