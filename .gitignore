@@ -1,0 +1,18 @@
+# 运行时数据：二维码 PNG、产品图标缓存、桥接日志
+data/
+
+# 开发期本地虚拟环境与上游克隆，体积大且可重建
+.venv/
+_upstream/
+_probe/
+
+# 冒烟测试 / i18n 检查的输出
+scripts/.out/
+
+# Python 与 Node 的常规忽略
+__pycache__/
+*.py[cod]
+*.egg-info/
+node_modules/
+.DS_Store
+Thumbs.db

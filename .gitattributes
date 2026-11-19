@@ -1,0 +1,9 @@
+# 统一按 LF 存库，避免 Windows 上 CRLF 反复产生伪差异
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.webp binary
+*.woff2 binary
+*.tgz binary

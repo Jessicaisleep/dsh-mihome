@@ -1,0 +1,17 @@
+# dsh-mihome bundle patch — one insert row over the profile tree.
+# Defaults live here; override any field in profiles/<name>/cordis.patch.yml
+# (e.g. pythonPath, dataDir) — later layers win per row.
+- insert:
+    - id: mihome
+      name: 'dsh-mihome'
+      config:
+        # 桥接用的 Python 解释器。留空 = 插件自带的 .venv
+        # （Windows: .venv\Scripts\python.exe；其它平台: .venv/bin/python）
+        pythonPath: ''
+        # 米家缓存与配置目录。留空 = <插件目录>/data
+        # （登录凭据本身由 mijiaAPI 存在 ~/.config/mijia-api/auth.json，不在这里）
+        dataDir: ''
+        # 普通设备操作的请求超时（毫秒）
+        requestTimeoutMs: 30000
+        # 登录扫码长轮询超时（毫秒）；上游最长阻塞约 2 分钟，别设太小
+        loginTimeoutMs: 150000
