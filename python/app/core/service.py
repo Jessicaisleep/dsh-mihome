@@ -20,6 +20,7 @@ import logging
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -100,6 +101,49 @@ def _wrap_error(exc: Exception, context: str) -> ServiceError:
     # 调用方统一用 raise ... from exc 保持原始堆栈链
     detail = "; ".join(str(a) for a in exc.args)
     return ServiceError(f"{context}: {detail}")
+
+
+def _require_device_confirmation(response) -> None:
+    """Only an explicit device success may be reported as a completed write."""
+    items = response if isinstance(response, list) else [response]
+    if not items or any(not isinstance(item, dict) for item in items):
+        raise ServiceError("未收到有效的设备执行确认，状态未知，请读取设备状态")
+    for item in items:
+        code = item.get("code")
+        if type(code) is int and code == 0:
+            continue
+        if type(code) is int and code == 1:
+            raise ServiceError("网关已接收指令，但设备执行结果未确认，请读取设备状态")
+        raise ServiceError(f"设置失败或未确认（错误码 {code}）")
+
+
+class _ConfirmedDeviceAPI:
+    """Keep upstream validation, but check responses before it discards them."""
+    def __init__(self, api):
+        self._api = api
+
+    def __getattr__(self, name):
+        return getattr(self._api, name)
+
+    def set_devices_prop(self, data):
+        response = self._api.set_devices_prop(data)
+        _require_device_confirmation(response)
+        return response
+
+    def run_action(self, data):
+        response = self._api.run_action(data)
+        _require_device_confirmation(response)
+        return response
+
+
+@contextmanager
+def _confirmed_device_api(device):
+    original = device.api
+    device.api = _ConfirmedDeviceAPI(original)
+    try:
+        yield
+    finally:
+        device.api = original
 
 
 def _serialized(method):
@@ -324,7 +368,8 @@ class MijiaService:
     def write_prop(self, did: str, name: str, value) -> None:
         dev = self._get_device(did)
         try:
-            dev.set(name, value)
+            with _confirmed_device_api(dev):
+                dev.set(name, value)
         except Exception as exc:
             raise _wrap_error(exc, f"设置属性 {name} 失败") from exc
 
@@ -332,25 +377,22 @@ class MijiaService:
     def run_action(self, did: str, name: str, params=None) -> None:
         dev = self._get_device(did)
         try:
-            if params is not None:
-                # 小爱类文本指令需走 _in 通道（见 mijiaAPI __main__.py:523
-                # wifispeaker.run_action('execute-text-directive', _in=[prompt, quiet])）
-                if name in ("execute-text-directive", "play-text", "play-music", "play-radio"):
-                    # 统一按 _in 传递，兼容单字符串与列表
-                    in_val = params if isinstance(params, (list, tuple)) else [params]
-                    # execute-text-directive 为 [文本, 是否静默](0/1)，缺省按非静默补齐
-                    if name == "execute-text-directive" and len(in_val) == 1:
-                        in_val = [in_val[0], 0]
-                    dev.run_action(name, _in=in_val)
-                elif isinstance(params, (list, tuple)):
-                    dev.run_action(name, params)
+            with _confirmed_device_api(dev):
+                if params is not None:
+                    # 小爱文本指令使用 MIoT in 参数，保留上游参数编码。
+                    if name in ("execute-text-directive", "play-text", "play-music", "play-radio"):
+                        in_val = params if isinstance(params, (list, tuple)) else [params]
+                        if name == "execute-text-directive" and len(in_val) == 1:
+                            in_val = [in_val[0], 0]
+                        dev.run_action(name, _in=in_val)
+                    elif isinstance(params, (list, tuple)):
+                        dev.run_action(name, params)
+                    else:
+                        dev.run_action(name, [params])
                 else:
-                    dev.run_action(name, [params])
-            else:
-                # 文本类动作无参必报 -704220025，这里直接引导上层弹输入
-                if name in ("execute-text-directive", "play-text"):
-                    raise ServiceError(f"动作 {name} 需要文本参数")
-                dev.run_action(name)
+                    if name in ("execute-text-directive", "play-text"):
+                        raise ServiceError(f"动作 {name} 需要文本参数")
+                    dev.run_action(name)
         except ServiceError:
             raise
         except Exception as exc:
@@ -508,18 +550,7 @@ class MijiaService:
             )
         except Exception as exc:
             raise _wrap_error(exc, "设置开关状态失败") from exc
-        # 写接口的 code 语义与读不同：上游把 code∈(0,1) 的响应统一
-        # 改写为「成功」（apis.py set_devices_prop 出口），其余一律失败
-        items = rets if isinstance(rets, list) else [rets]
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            code = item.get("code")
-            if code in (0, 1):
-                continue
-            raise ServiceError(
-                f"设置失败（{item.get('message', '未知错误')}，错误码 {code}）"
-            )
+        _require_device_confirmation(rets)
 
     @_serialized
     def power_states(self, dids: list[str]) -> dict[str, bool | None]:

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Mi Home",
-    "description": "Control Xiaomi Mi Home devices through mijiaAPI: device list, property read/write, actions and scenes, sensor readings. The Node plugin talks to a local Python bridge over JSON-Lines, and offers a Mi Home workbench in the sidebar as well as six mihome_* tools the agent can call directly."
+    "title": "Smart home",
+    "description": "Discover and manage devices in one workbench through Mi Home cloud, Home Assistant entities and supported local protocols. Includes LAN/BLE discovery, capability-based controls, private connection settings and custom scenes. Routers, ONTs, switches and NAS currently expose public management-page information; see the README for discovery-only protocols and control limits."
   }
 }

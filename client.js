@@ -73,6 +73,11 @@ window.__ModuleLoader__.load({
         deviceFallback: '设备',
 
         // 电源
+        turnOn: '开启',
+        turnOff: '关闭',
+        shConnectionUnknown: '连接状态未知',
+        shConnectionRetry: '重试连接状态',
+        shRefreshFailed: '刷新设备失败，请重试。',
         power: '电源',
         powerOn: '开机',
         powerOff: '关机',
@@ -124,6 +129,63 @@ window.__ModuleLoader__.load({
         consumableThreshold: '建议更换线',
         consumableAllGood: '所有耗材都还够用',
         consumableAllGoodHint: '等有耗材快用完时，这里会提前提醒你。',
+
+        // 全屋智能（不限于米家：局域网扫描 + 统一控制）
+        shNav: '全屋智能',
+        shTitle: '全屋智能',
+        shTabMihome: '米家',
+        shTabSmart: '全屋',
+        shScan: '扫描全屋',
+        shScanning: '扫描中…',
+        shScanDone: '扫描完成，发现 {n} 台设备。',
+        shDevicesCount: '台设备',
+        shHint: '这里包含局域网里能发现的设备（路由器、光猫、NAS、电视、灯、开关等）与米家设备。点一台可以看它能控制什么。',
+        shNoDevices: '还没发现设备',
+        shNoDevicesHint: '点右上角「扫描全屋」，插件会扫描本网段的设备；米家设备在「米家」页签里。',
+        shCapabilityError: '能力读取失败',
+        shReadError: '状态读取失败',
+        shNoControls: '这台设备没有可远程控制的项',
+        shNoControlsHint: '能发现它，但它没有公开的控制接口（或需要本地密钥）。可以在设置页 / 官方 App 里操作。',
+        shNoScenes: '还没有自定义场景',
+        shNoScenesHint: '可以让 AI 帮你建，比如「回家时开灯、关窗帘」，之后在这里一键执行。',
+        shWritable: '可写',
+        shActions: '个动作',
+        shOther: '其他设备',
+        shNewScene: '新建场景',
+        shEditScene: '编辑',
+        shDeleteScene: '删除',
+        shSaveScene: '保存场景',
+        shCancel: '取消',
+        shSceneJSON: '场景 JSON',
+        shSceneHelp: '填写 name 和 actions。每个动作明确填写 device、mode（write/action/power/scrape）及所需的 name、value、params 或 state。保存只保存配置，执行按钮才会运行。',
+        shJSONInvalid: 'JSON 格式不正确，请检查引号、逗号和括号。',
+        shObjectRequired: '请输入 JSON 对象。',
+        shSceneNameRequired: '场景需要非空的 name。',
+        shSceneActionsRequired: 'actions 至少需要一个动作。',
+        shSceneActionInvalid: '第 {n} 个动作缺少 device，或 mode / 参数无效。',
+        shSceneRetry: '重试场景',
+        shSceneResult: '成功 {success} / {total} 步',
+        shStepOK: '成功',
+        shStepFailed: '失败',
+        shActionObjectHint: '此动作需要 JSON 对象 {}，按下面参数结构填写。',
+        shActionArrayHint: '此动作需要 JSON 数组 []，按下面输入顺序填写。',
+        shActionSchema: '参数结构',
+        shActionParams: '动作参数 JSON',
+        shActionParamsHint: '明确输入参数 JSON（数组或对象）；无参数动作请输入 []。',
+        shActionParamsRequired: '请输入参数 JSON；无参数时填写 []。',
+        shValueInvalid: '请输入有效的数值。',
+        shNotConfirmed: '操作未返回成功确认。',
+        shConnection: '配置连接',
+        shConnectionJSON: '连接配置 JSON',
+        shConnectionTarget: '连接目标 ID',
+        shConnectionTargetRequired: '请输入连接目标 ID，例如 home_assistant:main。',
+        shConnectionHelp: 'Home Assistant 新连接使用目标 ID home_assistant:main，配置填 base_url、token；小米局域网可填 token；Tuya 可填 local_key、device_id、version 和 dps（显式 DP 映射，如 {"power":"1"}）。只保存到私有凭据，不会回显原值。保存会替换该目标整份配置。',
+        shConnectionSave: '保存连接',
+        shConnectionDelete: '删除连接',
+        shConnectionConfigured: '已保存连接配置',
+        shConnectionEmpty: '尚未保存连接配置',
+        shConnectionFailed: '连接配置未保存，请检查字段或稍后重试。',
+        shConnectionDeleteFailed: '连接配置未删除，请稍后重试。',
       },
       en: {
         nav: 'Mi Home',
@@ -164,6 +226,11 @@ window.__ModuleLoader__.load({
         noDevicesHint: 'Add devices in the Mi Home app and they show up here.',
         deviceFallback: 'Device',
 
+        turnOn: 'On',
+        turnOff: 'Off',
+        shConnectionUnknown: 'Connection status unknown',
+        shConnectionRetry: 'Retry connection status',
+        shRefreshFailed: 'Device refresh failed. Try again.',
         power: 'Power',
         powerOn: 'Turn on',
         powerOff: 'Turn off',
@@ -211,6 +278,63 @@ window.__ModuleLoader__.load({
         consumableThreshold: 'Replace below',
         consumableAllGood: 'All consumables are fine',
         consumableAllGoodHint: 'You will be warned here before one runs out.',
+
+        // Whole-home smart devices (LAN scan + unified control, not only Mi Home)
+        shNav: 'Smart Home',
+        shTitle: 'Whole-home devices',
+        shTabMihome: 'Mi Home',
+        shTabSmart: 'Whole home',
+        shScan: 'Scan',
+        shScanning: 'Scanning…',
+        shScanDone: 'Scan finished: {n} device(s) found.',
+        shDevicesCount: 'devices',
+        shHint: 'Devices found on your LAN (routers, ONTs, NAS, TVs, lights, switches…) plus Mi Home devices. Tap one to see what it can do.',
+        shNoDevices: 'No devices found yet',
+        shNoDevicesHint: 'Press "Scan" to look for devices on your subnet. Mi Home devices live on the Mi Home tab.',
+        shCapabilityError: 'Could not read capabilities',
+        shReadError: 'Could not read device state',
+        shNoControls: 'No remotely controllable items',
+        shNoControlsHint: 'The device was found but exposes no public control interface (or needs a local key). Use its settings page or official app.',
+        shNoScenes: 'No custom scenes yet',
+        shNoScenesHint: 'Ask the AI to create one, e.g. "when I get home, turn on the lights and close the curtains", then run it here.',
+        shWritable: 'writable',
+        shActions: 'action(s)',
+        shOther: 'Other devices',
+        shNewScene: 'New scene',
+        shEditScene: 'Edit',
+        shDeleteScene: 'Delete',
+        shSaveScene: 'Save scene',
+        shCancel: 'Cancel',
+        shSceneJSON: 'Scene JSON',
+        shSceneHelp: 'Enter name and actions. Each action must explicitly specify device, mode (write/action/power/scrape), and required name, value, params, or state. Save stores the configuration; only Run executes it.',
+        shJSONInvalid: 'Invalid JSON. Check quotes, commas, and brackets.',
+        shObjectRequired: 'Enter a JSON object.',
+        shSceneNameRequired: 'Scene name is required.',
+        shSceneActionsRequired: 'At least one action is required.',
+        shSceneActionInvalid: 'Action {n} is missing device or has an invalid mode or parameters.',
+        shSceneRetry: 'Retry scenes',
+        shSceneResult: 'Successful steps: {success} / {total}',
+        shStepOK: 'Succeeded',
+        shStepFailed: 'Failed',
+        shActionObjectHint: 'This action requires a JSON object {} matching the structure below.',
+        shActionArrayHint: 'This action requires a JSON array [] in the input order below.',
+        shActionSchema: 'Parameter structure',
+        shActionParams: 'Action parameters JSON',
+        shActionParamsHint: 'Explicitly enter parameters as JSON (array or object); enter [] for an action without parameters.',
+        shActionParamsRequired: 'Enter params as JSON; use [] when no parameters are needed.',
+        shValueInvalid: 'Enter a valid number.',
+        shNotConfirmed: 'The operation did not return success confirmation.',
+        shConnection: 'Connection settings',
+        shConnectionJSON: 'Connection JSON',
+        shConnectionTarget: 'Connection target ID',
+        shConnectionTargetRequired: 'Enter a connection target ID, e.g. home_assistant:main.',
+        shConnectionHelp: 'For a new Home Assistant connection, use target ID home_assistant:main and enter base_url and token. Mi Home LAN may use token; Tuya may use local_key, device_id, version, and dps (explicit DP mapping, e.g. {"power":"1"}). Stored privately and never read back. Saving replaces the entire target configuration.',
+        shConnectionSave: 'Save connection',
+        shConnectionDelete: 'Delete connection',
+        shConnectionConfigured: 'Connection configuration saved',
+        shConnectionEmpty: 'No connection configuration saved',
+        shConnectionFailed: 'Connection configuration was not saved. Check the fields or try again.',
+        shConnectionDeleteFailed: 'Connection configuration was not deleted. Try again.',
       },
     };
 
@@ -234,8 +358,27 @@ window.__ModuleLoader__.load({
       radiusMd: 'var(--dsw-radius-md, 12px)',
     };
 
-    // 米家 App 的橙色是品牌色；这里用它做磁贴高亮与开关。
-    const ORANGE = '#ff6a00';
+    // 高亮跟随宿主主题；未提供主题 token 时使用米家品牌色回退。
+    const ORANGE = C.brand;
+    const brandTint = (percent) => `color-mix(in srgb, ${C.brand} ${percent}%, transparent)`;
+
+    function booleanState(value) {
+      if (value === true || value === 1) return true;
+      if (value === false || value === 0) return false;
+      if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (['true', 'on', '1'].includes(normalized)) return true;
+        if (['false', 'off', '0'].includes(normalized)) return false;
+      }
+      return undefined;
+    }
+
+    function unknownBoolean(t, label, disabled, onChange) {
+      return h('div', { role: 'group', 'aria-label': label, style: { display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' } },
+        h('span', { style: muted }, t('unknown')),
+        h('button', { type: 'button', ...focusable, style: btn(), disabled, onClick: () => onChange(true) }, t('turnOn')),
+        h('button', { type: 'button', ...focusable, style: btn(), disabled, onClick: () => onChange(false) }, t('turnOff')));
+    }
 
     /* ---------------------------------------------------------------- 工具 */
 
@@ -261,8 +404,9 @@ window.__ModuleLoader__.load({
       } catch {
         body = null;
       }
-      if (!res.ok) {
-        const error = new Error(body?.error || `${res.status} ${path}`);
+      const failure = body?.ok === false ? body : body?.result?.ok === false ? body.result : null;
+      if (!res.ok || failure) {
+        const error = new Error(failure?.error || body?.error || `${res.status} ${path}`);
         error.body = body;
         throw error;
       }
@@ -426,7 +570,7 @@ window.__ModuleLoader__.load({
     /* -------------------------------------------------------------- 控件 */
 
     /** 开关（不用原生 checkbox，颜色跟主题走）。 */
-    function Switch({ checked, disabled, onChange, label }) {
+    function Switch({ checked, disabled, onChange, label, ...accessibility }) {
       const on = Boolean(checked);
       return h(
         'button',
@@ -435,6 +579,7 @@ window.__ModuleLoader__.load({
           role: 'switch',
           'aria-checked': on,
           'aria-label': label,
+          ...accessibility,
           disabled,
           onClick: () => onChange(!on),
           ...focusable,
@@ -889,6 +1034,7 @@ window.__ModuleLoader__.load({
           onClick: () => onOpen(device),
           ...focusable,
           onKeyDown: (e) => {
+            if (e.target !== e.currentTarget) return;
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               onOpen(device);
@@ -914,7 +1060,7 @@ window.__ModuleLoader__.load({
                 position: 'absolute',
                 inset: 0,
                 borderRadius: C.radiusMd,
-                background: 'rgba(255,106,0,.06)',
+                background: brandTint(6),
                 pointerEvents: 'none',
               },
             })
@@ -1067,7 +1213,7 @@ window.__ModuleLoader__.load({
       const props = detail?.props ?? [];
       const actions = detail?.actions ?? [];
       const powerProp = props.find((p) => p.name === 'on');
-      const powerOn = values?.on;
+      const powerOn = booleanState(values?.on);
       const commonProps = props.filter((p) => p.writable && p.name !== 'on' && !p.advanced);
       const readonlyProps = props.filter((p) => !p.writable && !p.advanced);
       const advancedProps = props.filter((p) => p.advanced);
@@ -1170,7 +1316,9 @@ window.__ModuleLoader__.load({
             problem && !/公开的功能规格/.test(problem)
               ? h('div', { style: { ...muted, marginTop: 8 } }, problem)
               : null,
-            powerProp
+            powerProp && powerOn === undefined
+              ? unknownBoolean(t, t('power'), busy || !online, runPower)
+              : powerProp
               ? h(
                   'div',
                   { style: { marginTop: 14 } },
@@ -1197,7 +1345,9 @@ window.__ModuleLoader__.load({
       }
 
       const powerBlock =
-        typeof powerOn === 'boolean' || powerProp
+        powerProp && powerOn === undefined
+          ? h('div', { style: { ...card, padding: 18 } }, unknownBoolean(t, t('power'), busy || !online, runPower))
+          : typeof powerOn === 'boolean' || powerProp
           ? h(
               'div',
               {
@@ -1208,8 +1358,8 @@ window.__ModuleLoader__.load({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: 16,
-                  background: powerOn ? 'rgba(255,106,0,.07)' : C.bgBase,
-                  borderColor: powerOn ? 'rgba(255,106,0,.35)' : C.border,
+                  background: powerOn ? brandTint(7) : C.bgBase,
+                  borderColor: powerOn ? brandTint(35) : C.border,
                 },
               },
               h(
@@ -1434,10 +1584,923 @@ window.__ModuleLoader__.load({
 
     /* ---------------------------------------------------------------- 面板 */
 
+    /* -------------------------------------------------------- 全屋智能面板 */
+
+    /**
+     * 全屋设备面板。
+     *
+     * 与米家面板的区别：这里的设备大多在**局域网**（路由器、光猫、NAS、
+     * 第三方灯/开关…），不需要米家账号，所以刻意不放在登录门禁后面。
+     *
+     * 数据流：/smart-home/devices 拿清单 → 按类别分组 → 点开单台拉详情
+     * （能力项已由 Python 侧翻译成中文）→ 控制走 /smart-home/control。
+     */
+    function SmartHomePanel({ t }) {
+      const [devices, setDevices] = useState([]);
+      const [scenes, setScenes] = useState([]);
+      const [scenesReady, setScenesReady] = useState(false);
+      const [sceneLoadError, setSceneLoadError] = useState('');
+      const [sceneRunDetails, setSceneRunDetails] = useState({});
+      const [ready, setReady] = useState(false);
+      const [error, setError] = useState('');
+      const [scanning, setScanning] = useState(false);
+      const [openId, setOpenId] = useState('');
+      const [detail, setDetail] = useState(null);
+      const [detailError, setDetailError] = useState('');
+      const [busy, setBusy] = useState('');
+      const [toast, setToast] = useState('');
+      const [mode, setMode] = useState('smart'); // 面板内部页签：设备 / 场景
+      const [sceneDraft, setSceneDraft] = useState('');
+      const [editingScene, setEditingScene] = useState(null);
+      const [sceneError, setSceneError] = useState('');
+      const [credentialStatus, setCredentialStatus] = useState('loading');
+      const [credentialRefreshError, setCredentialRefreshError] = useState('');
+      const [configuredCredentialIds, setConfiguredCredentialIds] = useState([]);
+      const [credentialTarget, setCredentialTarget] = useState('home_assistant:main');
+      const [credentialDraft, setCredentialDraft] = useState('');
+      const [credentialBusy, setCredentialBusy] = useState(false);
+      const requestVersion = useRef(0);
+      const listRequestVersion = useRef(0);
+      const sceneRequestVersion = useRef(0);
+      const operationVersion = useRef(0);
+      const toastTimer = useRef(null);
+      const credentialRequestVersion = useRef(0);
+
+      const flash = (message, isError) => {
+        clearTimeout(toastTimer.current);
+        setToast(isError ? `${t('errorPrefix')}${message}` : message);
+        toastTimer.current = setTimeout(() => setToast(''), isError ? 3600 : 1800);
+      };
+
+      const loadCredentials = useCallback(async () => {
+        const request = ++credentialRequestVersion.current;
+        setCredentialStatus('loading');
+        try {
+          const result = await getJSON('smart-home/credentials');
+          if (!Array.isArray(result.devices)) throw new Error('Invalid credential status');
+          if (request !== credentialRequestVersion.current) return;
+          setConfiguredCredentialIds(result.devices);
+          setCredentialStatus('ready');
+        } catch {
+          if (request === credentialRequestVersion.current) setCredentialStatus('unknown');
+        }
+      }, []);
+
+      const loadScenes = useCallback(async () => {
+        const request = ++sceneRequestVersion.current;
+        setSceneLoadError(''); setScenesReady(false);
+        try {
+          const result = await getJSON('smart-home/scenes');
+          if (request === sceneRequestVersion.current) setScenes(Array.isArray(result.scenes) ? result.scenes : []);
+        } catch (err) {
+          if (request === sceneRequestVersion.current) setSceneLoadError(err?.body?.error ?? err.message ?? String(err));
+        } finally { if (request === sceneRequestVersion.current) setScenesReady(true); }
+      }, []);
+
+      const load = useCallback(
+        async (force) => {
+          const request = ++listRequestVersion.current;
+          setError(''); setReady(false); setScanning(false);
+          const scenesRequest = loadScenes();
+          try {
+            const dev = await getJSON(`smart-home/devices${force ? '?refresh=1' : ''}`);
+            if (request === listRequestVersion.current) setDevices(Array.isArray(dev.devices) ? dev.devices : []);
+          } catch (err) {
+            if (request === listRequestVersion.current) setError(err?.body?.error ?? err.message ?? String(err));
+          } finally {
+            if (request === listRequestVersion.current) setReady(true);
+            await scenesRequest;
+          }
+        },
+        [loadScenes],
+      );
+
+      useEffect(() => {
+        load(false);
+        loadCredentials();
+        return () => { requestVersion.current += 1; listRequestVersion.current += 1; sceneRequestVersion.current += 1; operationVersion.current += 1; credentialRequestVersion.current += 1; clearTimeout(toastTimer.current); };
+      }, [load, loadCredentials]);
+
+      const scan = async () => {
+        const request = ++listRequestVersion.current;
+        setScanning(true); setError('');
+        try {
+          const result = await getJSON('smart-home/scan?force=1');
+          if (request !== listRequestVersion.current) return;
+          const list = Array.isArray(result.devices) ? result.devices : [];
+          setDevices(list);
+          flash(tf(t, 'shScanDone', { n: list.length }));
+        } catch (err) {
+          if (request === listRequestVersion.current) flash(err?.body?.error ?? err.message ?? String(err), true);
+        } finally {
+          if (request === listRequestVersion.current) { setScanning(false); setReady(true); }
+        }
+      };
+
+      const openDevice = async (device) => {
+        const version = ++requestVersion.current;
+        operationVersion.current += 1;
+        setBusy('');
+        setOpenId(device.id);
+        setCredentialTarget(device.id);
+        setDetail(null);
+        setDetailError('');
+        setCredentialDraft(''); setCredentialRefreshError('');
+        loadCredentials();
+        try {
+          const result = await getJSON(`smart-home/device?id=${encodeURIComponent(device.id)}`);
+          if (requestVersion.current !== version) return;
+          setDetail(result.detail ?? null);
+        } catch (err) {
+          if (requestVersion.current === version) setDetailError(err?.body?.error ?? err.message ?? String(err));
+        }
+      };
+
+      const control = async (deviceId, body, label) => {
+        const version = requestVersion.current;
+        const operation = ++operationVersion.current;
+        setBusy(`${deviceId}:${label}`);
+        try {
+          const result = await postJSON('smart-home/control', { device_id: deviceId, ...body });
+          if (result?.ok !== true || result?.result?.ok === false) throw new Error(result?.error ?? result?.result?.error ?? t('shNotConfirmed'));
+          if (operationVersion.current === operation && requestVersion.current === version && openId === deviceId) flash(t('done'));
+          if (requestVersion.current === version && openId === deviceId) {
+            const refreshed = await getJSON(`smart-home/device?id=${encodeURIComponent(deviceId)}`);
+            if (requestVersion.current === version && openId === deviceId) setDetail(refreshed.detail ?? null);
+          }
+        } catch (err) {
+          if (operationVersion.current === operation && requestVersion.current === version && openId === deviceId)
+            flash(err?.body?.error ?? err.message ?? String(err), true);
+        } finally {
+          if (operationVersion.current === operation) setBusy('');
+        }
+      };
+
+      const runScene = async (scene) => {
+        setBusy(`scene:${scene.id}`);
+        try {
+          const result = await postJSON('smart-home/scene', { mode: 'run', scene_id: scene.id });
+          setSceneRunDetails((previous) => ({ ...previous, [scene.id]: result.result ?? result }));
+          if (result?.ok !== true || result?.result?.ok === false) throw new Error(t('shNotConfirmed'));
+          flash(t('done'));
+        } catch (err) {
+          if (err?.body) setSceneRunDetails((previous) => ({ ...previous, [scene.id]: err.body.result ?? err.body }));
+          flash(err?.body?.error ?? err.message ?? String(err), true);
+        } finally {
+          setBusy('');
+        }
+      };
+
+      const saveScene = async () => {
+        let scene;
+        try { scene = JSON.parse(sceneDraft); }
+        catch { setSceneError(t('shJSONInvalid')); return; }
+        if (!scene || typeof scene !== 'object' || Array.isArray(scene)) { setSceneError(t('shObjectRequired')); return; }
+        if (!String(scene.name ?? '').trim()) { setSceneError(t('shSceneNameRequired')); return; }
+        if (!Array.isArray(scene.actions) || !scene.actions.length) { setSceneError(t('shSceneActionsRequired')); return; }
+        const modes = new Set(['power', 'write', 'action', 'scrape']);
+        for (const [index, action] of scene.actions.entries()) {
+          if (!action || typeof action !== 'object' || Array.isArray(action) || !String(action.device ?? '').trim() || !modes.has(action.mode ?? 'write') ||
+            (['write', 'action'].includes(action.mode ?? 'write') && !String(action.name ?? '').trim()) ||
+            (action.mode === 'power' && action.state !== undefined && typeof action.state !== 'boolean') ||
+            (action.mode === 'action' && !Object.hasOwn(action, 'params'))) {
+            setSceneError(tf(t, 'shSceneActionInvalid', { n: index + 1 })); return;
+          }
+        }
+        setSceneError(''); setBusy('scene:edit');
+        try {
+          const result = await postJSON('smart-home/scene', { mode: 'save', scene });
+          if (result?.ok !== true || result?.result?.ok === false) throw new Error(t('shNotConfirmed'));
+          if (Array.isArray(result?.scenes)) setScenes(result.scenes);
+          else await load(false);
+          setEditingScene(null); setSceneDraft(''); flash(t('done'));
+        } catch (err) { setSceneError(err?.body?.error ?? err.message ?? String(err)); }
+        finally { setBusy(''); }
+      };
+
+      const deleteScene = async (scene) => {
+        setBusy(`scene:${scene.id}`);
+        try {
+          const result = await postJSON('smart-home/scene', { mode: 'delete', scene_id: scene.id });
+          if (result?.deleted !== true && result?.result?.deleted !== true) throw new Error(t('shNotConfirmed'));
+          if (Array.isArray(result?.scenes)) setScenes(result.scenes);
+          else setScenes((previous) => previous.filter((item) => item.id !== scene.id));
+          flash(t('done'));
+        } catch (err) { flash(err?.body?.error ?? err.message ?? String(err), true); }
+        finally { setBusy(''); }
+      };
+
+      const refreshAfterCredentials = async (target, version) => {
+        if (requestVersion.current !== version) return;
+        if (!openId) { await load(false); return; }
+        try {
+          const refreshed = await getJSON(`smart-home/device?id=${encodeURIComponent(target)}`);
+          if (requestVersion.current === version) setDetail(refreshed.detail ?? null);
+        } catch {
+          if (requestVersion.current === version) setCredentialRefreshError(t('shRefreshFailed'));
+        }
+      };
+
+      const saveCredentials = async () => {
+        const version = requestVersion.current;
+        const target = (credentialTarget || '').trim() || openId;
+        if (!target) { flash(t('shConnectionTargetRequired'), true); return; }
+        let payload;
+        try { payload = JSON.parse(credentialDraft); }
+        catch { flash(t('shJSONInvalid'), true); return; }
+        if (!payload || typeof payload !== 'object' || Array.isArray(payload)) { flash(t('shObjectRequired'), true); return; }
+        setCredentialDraft(''); setCredentialBusy(true); setCredentialRefreshError('');
+        let saved = false;
+        try {
+          const result = await postJSON('smart-home/credentials', { device_id: target, mode: 'save', payload });
+          if (result?.ok !== true || result?.result?.ok === false) throw new Error(t('shConnectionFailed'));
+          credentialRequestVersion.current += 1;
+          setConfiguredCredentialIds((previous) => Array.from(new Set([...previous, target])));
+          setCredentialStatus('ready');
+          saved = true; flash(t('shConnectionConfigured'));
+        } catch { flash(t('shConnectionFailed'), true); }
+        finally { setCredentialBusy(false); }
+        if (saved) await refreshAfterCredentials(target, version);
+      };
+
+      const removeCredentials = async () => {
+        const version = requestVersion.current;
+        const target = (credentialTarget || '').trim() || openId;
+        if (!target) { flash(t('shConnectionTargetRequired'), true); return; }
+        setCredentialBusy(true); setCredentialDraft(''); setCredentialRefreshError('');
+        let deleted = false;
+        try {
+          const result = await postJSON('smart-home/credentials', { device_id: target, mode: 'delete' });
+          if (result?.ok !== true || result?.result?.ok === false || (Object.hasOwn(result, 'configured') && result.configured !== false))
+            throw new Error(t('shConnectionDeleteFailed'));
+          credentialRequestVersion.current += 1;
+          setConfiguredCredentialIds((previous) => previous.filter((id) => id !== target));
+          setCredentialStatus('ready');
+          deleted = true; flash(t('shConnectionEmpty'));
+        } catch { flash(t('shConnectionDeleteFailed'), true); }
+        finally { setCredentialBusy(false); }
+        if (deleted) await refreshAfterCredentials(target, version);
+      };
+
+      const connectionEditor = h('details', { open: !openId && (!devices.length || Boolean(error)), style: { ...card, padding: 16, marginTop: 16 } },
+        h('summary', { ...focusable, style: { cursor: 'pointer', fontSize: 13, color: C.label, outline: '2px solid transparent' } }, t('shConnection')),
+        !openId ? h('input', { type: 'text', 'aria-label': t('shConnectionTarget'), value: credentialTarget,
+          disabled: credentialBusy, onChange: (event) => { setCredentialTarget(event.target.value); setCredentialDraft(''); },
+          style: btn({ width: '100%', boxSizing: 'border-box', marginTop: 10 }) }) : null,
+        h('div', { role: credentialStatus === 'unknown' ? 'alert' : 'status', style: { ...muted, marginTop: 8, color: credentialStatus === 'unknown' ? C.error : C.label3 } },
+          credentialStatus === 'unknown' ? t('shConnectionUnknown') : credentialStatus === 'loading' ? t('loading') :
+            configuredCredentialIds.some((id) => id === (openId || credentialTarget.trim()) ||
+              (openId && id.startsWith('home_assistant:') && openId.startsWith(`${id}/`)))
+              ? t('shConnectionConfigured') : t('shConnectionEmpty')),
+        credentialStatus === 'unknown' ? h('button', { type: 'button', ...focusable, style: btn({ marginTop: 6 }), onClick: loadCredentials }, t('shConnectionRetry')) : null,
+        credentialRefreshError ? h('div', { role: 'alert', style: { color: C.error, marginTop: 6 } }, credentialRefreshError) : null,
+        h('div', { style: { ...muted, lineHeight: '20px', margin: '8px 0' } }, t('shConnectionHelp')),
+        h('textarea', { 'aria-label': t('shConnectionJSON'), value: credentialDraft, rows: 5, disabled: credentialBusy,
+          autoComplete: 'off', spellCheck: false, onChange: (event) => setCredentialDraft(event.target.value),
+          style: btn({ width: '100%', boxSizing: 'border-box', fontFamily: 'monospace', resize: 'vertical', textAlign: 'left' }) }),
+        h('div', { style: { display: 'flex', gap: 8, marginTop: 8 } },
+          h('button', { type: 'button', ...focusable, style: btn(), disabled: credentialBusy, onClick: saveCredentials }, t('shConnectionSave')),
+          h('button', { type: 'button', ...focusable, style: btn({ color: C.error }), disabled: credentialBusy, onClick: removeCredentials }, t('shConnectionDelete')),
+        ),
+      );
+
+      const header = h(
+        'div',
+        {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            paddingBottom: 12,
+            borderBottom: `1px solid ${C.border}`,
+            ...stickyHeader(),
+          },
+        },
+        h(
+          'div',
+          null,
+          h('div', { style: { fontSize: 18, fontWeight: 600, color: C.label } }, t('shTitle')),
+          h(
+            'div',
+            { style: { ...muted, marginTop: 2 } },
+            `${devices.length} ${t('shDevicesCount')}`,
+          ),
+        ),
+        h(
+          'div',
+          { style: { display: 'flex', gap: 8 } },
+          h(
+            'button',
+            { type: 'button', ...focusable, style: btn({ background: C.bgLayer1 }), onClick: () => load(false) },
+            t('refresh'),
+          ),
+          h(
+            'button',
+            {
+              type: 'button',
+              ...focusable,
+              disabled: scanning,
+              style: btn({
+                background: scanning ? C.bgLayer1 : ORANGE,
+                color: scanning ? C.label2 : '#fff',
+                border: `1px solid ${scanning ? C.border : ORANGE}`,
+                cursor: scanning ? 'progress' : 'pointer',
+              }),
+              onClick: scan,
+            },
+            scanning ? t('shScanning') : t('shScan'),
+          ),
+        ),
+      );
+
+      if (!ready) {
+        return h('div', { style: PAGE }, header, h('div', { style: { ...muted, marginTop: 16 } }, t('loading')));
+      }
+
+      if (error) {
+        return h(
+          'div',
+          { style: PAGE },
+          header,
+          connectionEditor,
+          h(
+            'div',
+            { role: 'alert', style: { ...card, padding: 18, marginTop: 16 } },
+            h('div', { style: { fontSize: 14, color: C.error } }, `${t('errorPrefix')}${error}`),
+            h('button', { type: 'button', ...focusable, style: btn({ marginTop: 12 }), onClick: () => load(true) }, t('retry')),
+          ),
+        );
+      }
+
+      /* ---- 设备详情 ---- */
+      if (openId) {
+        const device = devices.find((d) => d.id === openId) ?? { id: openId, name: openId };
+        const valueOf = (cap) => {
+          const values = detail?.values;
+          if (!values || typeof values !== 'object') return undefined;
+          return Object.hasOwn(values, cap.key) ? values[cap.key] : values[cap.name];
+        };
+        const controls = Array.isArray(detail?.controls) ? detail.controls : [];
+        return h(
+          'div',
+          { style: PAGE },
+          h(
+            'div',
+            {
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '12px 0',
+                borderBottom: `1px solid ${C.border}`,
+                ...stickyHeader(),
+              },
+            },
+            h(
+              'button',
+              { type: 'button', ...focusable, style: btn({ background: C.bgLayer1 }), onClick: () => { requestVersion.current += 1; operationVersion.current += 1; setBusy(''); setOpenId(''); setCredentialTarget('home_assistant:main'); setDetail(null); setCredentialDraft(''); } },
+              `‹ ${t('back')}`,
+            ),
+            h(
+              'div',
+              { style: { minWidth: 0 } },
+              h(
+                'div',
+                { style: { fontSize: 15, fontWeight: 600, color: C.label } },
+                device.name || device.id,
+              ),
+              h(
+                'div',
+                { style: { ...muted, marginTop: 2 } },
+                [`id=${device.id}`, device.category_zh, device.protocol, device.ip].filter(Boolean).join(' · '),
+              ),
+            ),
+          ),
+          detailError
+            ? h('div', { role: 'alert', style: { ...card, padding: 16, marginTop: 16 } }, h('div', { style: { color: C.error, fontSize: 13 } }, detailError))
+            : null,
+          ['capability_error', 'read_error'].filter((key) => detail?.[key]).map((key) =>
+            h('div', { key, role: 'alert', style: { ...card, color: C.error, padding: 16, marginTop: 16 } },
+              `${t(key === 'capability_error' ? 'shCapabilityError' : 'shReadError')}: ${detail[key]}`)),
+          detail && (detail.capability_error || detail.read_error)
+            ? h('button', { type: 'button', ...focusable, style: btn({ marginTop: 8 }), onClick: () => openDevice(device) }, t('retry'))
+            : null,
+          !detail && !detailError
+            ? h('div', { style: { ...muted, marginTop: 16 } }, t('loading'))
+            : null,
+          detail && controls.length
+            ? h(
+                'div',
+                { style: { ...card, padding: '4px 16px', marginTop: 16 } },
+                controls.map((cap) =>
+                  h(
+                    'div',
+                    { key: cap.key, style: rowStyle },
+                    h(
+                      'div',
+                      { style: { minWidth: 0 } },
+                      h('div', { style: { fontSize: 13, color: C.label } }, cap.zh || cap.name),
+                      h(
+                        'div',
+                        { style: { ...muted, marginTop: 2 } },
+                        [
+                          `key=${cap.key}`, `name=${cap.name ?? ''}`, `kind=${cap.kind ?? 'unknown'}`,
+                          `readable=${cap.readable ?? 'unknown'}`, `writable=${cap.writable ?? 'unknown'}`,
+                          cap.range !== undefined ? `range=${JSON.stringify(cap.range)}` :
+                            cap.min !== undefined || cap.max !== undefined ? `range=${JSON.stringify({ min: cap.min, max: cap.max, step: cap.step })}` : null,
+                          (cap.step ?? (Array.isArray(cap.range) ? cap.range[2] : cap.range?.step)) !== undefined
+                            ? `step=${cap.step ?? (Array.isArray(cap.range) ? cap.range[2] : cap.range?.step)}` : null,
+                          (cap.unit ?? cap.units) !== undefined ? `units=${JSON.stringify(cap.unit ?? cap.units)}` : null,
+                          (cap.value_list?.length || cap.values?.length) ? `enums=${JSON.stringify((cap.value_list?.length ? cap.value_list : cap.values).map((option) => option && typeof option === 'object' ? option.value : option))}` : null,
+                        ].filter(Boolean).join(' · '),
+                      ),
+                    ),
+                    h(CapabilityControl, {
+                      'aria-label': cap.zh || cap.name || cap.key,
+                      cap,
+                      value: valueOf(cap),
+                      t,
+                      disabled: busy === `${openId}:${cap.key}`,
+                      onWrite: (next) => control(openId, { mode: 'write', name: cap.key, value: next }, cap.key),
+                       onAction: (params) => control(openId, { mode: 'action', name: cap.key, params }, cap.key),
+                    }),
+                  ),
+                ),
+              )
+            : null,
+          detail && !controls.length && !detail.capability_error && !detail.read_error
+            ? h(
+                'div',
+                { style: { ...card, padding: 18, marginTop: 16 } },
+                h('div', { style: { fontSize: 14, fontWeight: 600, color: C.label } }, t('shNoControls')),
+                h('div', { style: { ...muted, marginTop: 6, lineHeight: '20px' } }, t('shNoControlsHint')),
+              )
+            : null,
+          connectionEditor,
+          toast ? h(Toast, { text: toast, t }) : null,
+        );
+      }
+
+      /* ---- 设备列表：按类别分组 ---- */
+      const groups = new Map();
+      for (const device of devices) {
+        const key = device.category_zh || device.category || t('shOther');
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(device);
+      }
+
+      const tile = (device) =>
+        h(
+          'button',
+          {
+            key: device.id,
+            type: 'button',
+            onClick: () => openDevice(device),
+            ...focusable,
+            style: {
+              ...card,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 4,
+              padding: '12px 14px',
+              textAlign: 'left',
+              cursor: 'pointer',
+              width: '100%',
+              outline: '2px solid transparent',
+            },
+          },
+          h(
+            'div',
+            {
+              style: {
+                fontSize: 13,
+                fontWeight: 500,
+                color: C.label,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+              },
+            },
+            device.name || device.id,
+          ),
+          h(
+            'div',
+            { style: { ...muted, fontSize: 11 } },
+            [device.protocol, device.ip].filter(Boolean).join(' · ') || device.id,
+          ),
+        );
+
+      const deviceList = devices.length
+        ? Array.from(groups.entries()).map(([category, items]) =>
+            h(
+              'div',
+              { key: category },
+              h('div', { style: sectionTitle }, `${category}（${items.length}）`),
+              h(
+                'div',
+                {
+                  style: {
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                    gap: 10,
+                  },
+                },
+                items.map(tile),
+              ),
+            ),
+          )
+        : h(
+            'div',
+            { style: { ...card, padding: 20, marginTop: 20 } },
+            h('div', { style: { fontSize: 14, fontWeight: 600, color: C.label } }, t('shNoDevices')),
+            h('div', { style: { ...muted, marginTop: 6, lineHeight: '20px' } }, t('shNoDevicesHint')),
+          );
+
+      const sceneReport = (scene) => {
+        const result = sceneRunDetails[scene.id];
+        if (!result) return null;
+        const steps = Array.isArray(result.steps) ? result.steps : Array.isArray(result.results) ? result.results : [];
+        const success = Number.isInteger(result.success) ? result.success : steps.filter((step) => step?.ok === true).length;
+        const total = Number.isInteger(result.total) ? result.total : steps.length;
+        return h('div', { role: 'status', 'aria-live': 'polite', style: { width: '100%', fontSize: 12, color: C.label2 } },
+          h('div', null, tf(t, 'shSceneResult', { success, total })),
+          result.error ? h('div', { style: { color: C.error } }, String(result.error)) : null,
+          steps.map((step, index) => h('div', { key: index, style: { marginTop: 4, color: step?.ok === true ? C.label2 : C.error } },
+            `${index + 1}. ${step?.device ?? step?.device_id ?? '?'} ${step?.mode ?? ''} · ${t(step?.ok === true ? 'shStepOK' : 'shStepFailed')}${step?.error ?? step?.result?.error ? ` · ${step.error ?? step.result.error}` : ''}`)),
+        );
+      };
+      const sceneBlock = h('div', { style: { marginTop: 12 } },
+        sceneLoadError ? h('div', { role: 'alert', style: { ...card, padding: 12, marginBottom: 12, color: C.error } },
+          h('div', null, `${t('errorPrefix')}${sceneLoadError}`),
+          h('button', { type: 'button', ...focusable, style: btn({ marginTop: 8 }), onClick: loadScenes }, t('shSceneRetry'))) : null,
+        !scenesReady ? h('div', { role: 'status', style: muted }, t('loading')) : null,
+        h('button', { type: 'button', ...focusable, style: btn(), disabled: Boolean(busy), onClick: () => {
+          setEditingScene('new'); setSceneError('');
+          setSceneDraft(JSON.stringify({ name: '', actions: [] }, null, 2));
+        } }, t('shNewScene')),
+        editingScene !== null ? h('div', { style: { ...card, padding: 16, marginTop: 12 } },
+          h('div', { style: { ...muted, marginBottom: 8 } }, t('shSceneHelp')),
+          h('textarea', { 'aria-label': t('shSceneJSON'), ...focusable, value: sceneDraft, rows: 12, disabled: Boolean(busy),
+            onChange: (event) => setSceneDraft(event.target.value),
+            style: btn({ width: '100%', boxSizing: 'border-box', fontFamily: 'monospace', resize: 'vertical', textAlign: 'left' }) }),
+          sceneError ? h('div', { role: 'alert', style: { color: C.error, fontSize: 12, marginTop: 6 } }, sceneError) : null,
+          h('div', { style: { display: 'flex', gap: 8, marginTop: 8 } },
+            h('button', { type: 'button', ...focusable, style: btn(), disabled: Boolean(busy), onClick: saveScene }, t('shSaveScene')),
+            h('button', { type: 'button', ...focusable, style: btn(), disabled: Boolean(busy), onClick: () => { setEditingScene(null); setSceneDraft(''); setSceneError(''); } }, t('shCancel')),
+          ),
+        ) : null,
+        scenes.length ? h('div', { style: { display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 } },
+          scenes.map((scene) => h('div', { key: scene.id, style: { ...card, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' } },
+            h('div', null,
+              h('div', { style: { fontSize: 14, fontWeight: 500, color: C.label } }, scene.name),
+              h('div', { style: { ...muted, marginTop: 2 } }, `${Array.isArray(scene.actions) ? scene.actions.length : 0} ${t('shActions')}`),
+            ),
+            h('div', { style: { display: 'flex', gap: 8 } },
+              h('button', { type: 'button', ...focusable, style: btn(), disabled: Boolean(busy), onClick: () => runScene(scene) }, busy === `scene:${scene.id}` ? t('running') : t('run')),
+              h('button', { type: 'button', ...focusable, style: btn(), disabled: Boolean(busy), onClick: () => { setEditingScene(scene.id); setSceneError(''); setSceneDraft(JSON.stringify(scene, null, 2)); } }, t('shEditScene')),
+              h('button', { type: 'button', ...focusable, style: btn({ color: C.error }), disabled: Boolean(busy), onClick: () => deleteScene(scene) }, t('shDeleteScene')),
+            ),
+            sceneReport(scene),
+          )),
+        ) : scenesReady && !sceneLoadError ? h('div', { style: { ...card, padding: 20, marginTop: 20 } },
+          h('div', { style: { fontSize: 14, fontWeight: 600, color: C.label } }, t('shNoScenes')),
+          h('div', { style: { ...muted, marginTop: 6 } }, t('shNoScenesHint')),
+        ) : null,
+      );
+
+      const tabBar = h(
+        'div',
+        {
+          role: 'tablist',
+          style: { display: 'flex', gap: 6, marginTop: 12, padding: 3, background: C.bgLayer1, borderRadius: C.radius },
+        },
+        [
+          { id: 'smart', label: t('tabDevices'), badge: devices.length },
+          { id: 'scenes', label: t('tabScenes'), badge: scenes.length },
+        ].map((entry) =>
+          h(
+            'button',
+            {
+              key: entry.id,
+              type: 'button',
+              role: 'tab',
+              'aria-selected': mode === entry.id,
+              onClick: () => setMode(entry.id),
+              ...focusable,
+              style: {
+                flex: '1 1 0',
+                appearance: 'none',
+                border: 'none',
+                borderRadius: C.radius,
+                padding: '7px 10px',
+                fontSize: 13,
+                fontWeight: mode === entry.id ? 600 : 400,
+                color: mode === entry.id ? C.label : C.label2,
+                background: mode === entry.id ? C.bgBase : 'transparent',
+                cursor: 'pointer',
+                outline: '2px solid transparent',
+              },
+            },
+            entry.label,
+            entry.badge ? h('span', { style: { marginLeft: 4, fontSize: 11, color: C.label3 } }, `· ${entry.badge}`) : null,
+          ),
+        ),
+      );
+
+      return h(
+        'div',
+        { style: PAGE },
+        header,
+        tabBar,
+        mode === 'smart' ? connectionEditor : null,
+        mode === 'smart' ? h('div', null, h('div', { style: { ...muted, marginTop: 10 } }, t('shHint')), deviceList) : null,
+        mode === 'scenes' ? sceneBlock : null,
+        toast ? h(Toast, { text: toast, t }) : null,
+      );
+    }
+
+    /** 底部提示条（设备/场景操作反馈）。 */
+    function Toast({ text, t }) {
+      return h(
+        'div',
+        {
+          role: String(text).startsWith(t('errorPrefix')) ? 'alert' : 'status',
+          'aria-live': String(text).startsWith(t('errorPrefix')) ? 'assertive' : 'polite',
+          style: {
+            position: 'sticky',
+            bottom: 12,
+            marginTop: 14,
+            padding: '8px 14px',
+            background: C.bgLayer2,
+            border: `1px solid ${C.border}`,
+            borderRadius: C.radius,
+            fontSize: 12,
+            color: String(text).startsWith(t('errorPrefix')) ? C.error : C.success,
+            display: 'inline-block',
+          },
+        },
+        text,
+      );
+    }
+
+    /**
+     * 统一能力项控件。
+     *
+     * cap 来自 Python 的 catalog：{ key, zh, name, kind: bool|range|enum, writable,
+     * values?, min/max/step/unit }。写入用 cap.key（统一能力名），不是原始属性名——
+     * 适配器按能力名分发，原始名只用于读当前值。
+     */
+    function CapabilityControl({ cap, value, t, disabled, onWrite, onAction, 'aria-label': ariaLabel }) {
+      const [draft, setDraft] = useState('');
+      const [paramsDraft, setParamsDraft] = useState('');
+      const [paramsError, setParamsError] = useState('');
+      const [localBusy, setLocalBusy] = useState(false);
+
+      useEffect(() => {
+        setDraft(value === undefined || value === null ? '' : value);
+      }, [value]);
+
+      const commit = async (next) => {
+        setLocalBusy(true);
+        try {
+          await onWrite(next);
+        } finally {
+          setLocalBusy(false);
+        }
+      };
+
+      const off = disabled || localBusy || cap.writable === false;
+      const boolValue = booleanState(value);
+
+      const label = cap.zh || cap.name || cap.key;
+      if (cap.kind === 'action') {
+        const inputs = cap.inputs ?? cap.in;
+        const schema = cap.params_schema ?? (inputs && !Array.isArray(inputs) && typeof inputs === 'object' && inputs.type ? inputs : null);
+        const validate = (input, rule, path = 'params') => {
+          if (!rule || typeof rule !== 'object') return '';
+          const type = rule.type;
+          const matches = (expected) => expected === 'object' ? input !== null && typeof input === 'object' && !Array.isArray(input)
+            : expected === 'array' ? Array.isArray(input) : expected === 'integer' ? Number.isInteger(input)
+              : expected === 'number' ? typeof input === 'number' && Number.isFinite(input) : expected === 'null' ? input === null
+                : ['string', 'boolean'].includes(expected) ? typeof input === expected : true;
+          if (type && !(Array.isArray(type) ? type : [type]).some(matches))
+            return type === 'object' ? `${path}: ${t('shObjectRequired')}` : `${path}: expected ${type}`;
+          if (Array.isArray(rule.enum) && !rule.enum.some((option) => JSON.stringify(option) === JSON.stringify(input))) return `${path}: enum ${JSON.stringify(rule.enum)}`;
+          if (typeof input === 'number') {
+            if (Number.isFinite(rule.minimum) && input < rule.minimum) return `${path}: minimum ${rule.minimum}`;
+            if (Number.isFinite(rule.maximum) && input > rule.maximum) return `${path}: maximum ${rule.maximum}`;
+          }
+          if (Array.isArray(input)) {
+            if (Number.isInteger(rule.minItems) && input.length < rule.minItems) return `${path}: minItems ${rule.minItems}`;
+            if (Number.isInteger(rule.maxItems) && input.length > rule.maxItems) return `${path}: maxItems ${rule.maxItems}`;
+            for (const [index, item] of input.entries()) {
+              const error = validate(item, rule.prefixItems?.[index] ?? rule.items, `${path}[${index}]`);
+              if (error) return error;
+            }
+          } else if (input && typeof input === 'object') {
+            for (const key of Array.isArray(rule.required) ? rule.required : []) if (!Object.hasOwn(input, key)) return `${path}.${key}: required`;
+            for (const [key, item] of Object.entries(input)) {
+              if (rule.additionalProperties === false && !Object.hasOwn(rule.properties ?? {}, key)) return `${path}.${key}: unknown field`;
+              const error = validate(item, rule.properties?.[key], `${path}.${key}`);
+              if (error) return error;
+            }
+          }
+          return '';
+        };
+        const execute = async () => {
+          if (!paramsDraft.trim()) { setParamsError(t('shActionParamsRequired')); return; }
+          let params;
+          try { params = JSON.parse(paramsDraft); }
+          catch { setParamsError(t('shJSONInvalid')); return; }
+          if (params === null || typeof params !== 'object') { setParamsError(t('shObjectRequired')); return; }
+          const validationError = validate(params, schema);
+          if (validationError) { setParamsError(validationError); return; }
+          setParamsError(''); setLocalBusy(true);
+          try { await onAction(params); }
+          finally { setLocalBusy(false); }
+        };
+        return h('div', { style: { display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 340 } },
+          h('div', { style: muted }, t(schema?.type === 'object' ? 'shActionObjectHint' : schema?.type === 'array' ? 'shActionArrayHint' : 'shActionParamsHint')),
+          schema || inputs !== undefined ? h('pre', { 'aria-label': t('shActionSchema'), style: { ...muted, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', margin: 0 } }, JSON.stringify(schema ?? inputs, null, 2)) : null,
+          h('textarea', { 'aria-label': `${label} · ${t('shActionParams')}`, ...focusable, value: paramsDraft, disabled: off,
+            onChange: (event) => setParamsDraft(event.target.value), rows: 3, placeholder: schema?.type === 'object' ? '{}' : '[]',
+            style: btn({ width: '100%', resize: 'vertical', fontFamily: 'monospace', boxSizing: 'border-box' }) }),
+          paramsError ? h('div', { role: 'alert', style: { ...muted, color: C.error } }, paramsError) : null,
+          h('button', { type: 'button', ...focusable, style: btn(), disabled: off, onClick: execute }, t('run')),
+        );
+      }
+
+      if (cap.kind === 'bool') {
+        if (boolValue === undefined) return unknownBoolean(t, ariaLabel || label, off, commit);
+        return h(Switch, {
+          checked: boolValue,
+          disabled: off,
+          label: cap.zh || cap.name,
+          'aria-label': ariaLabel || label,
+          onChange: (next) => commit(next),
+        });
+      }
+
+      const enumValues = Array.isArray(cap.values) && cap.values.length ? cap.values : cap.value_list;
+      if (cap.kind === 'enum' && Array.isArray(enumValues) && enumValues.length) {
+        const options = enumValues.map((entry) => entry && typeof entry === 'object' && Object.hasOwn(entry, 'value')
+          ? entry : { value: entry });
+        const currentIndex = options.findIndex((option) => Object.is(option.value, value));
+        if (options.length <= 5) {
+          return h(
+            'div',
+            {
+              role: 'group',
+              'aria-label': label,
+              style: {
+                display: 'inline-flex',
+                border: `1px solid ${C.border}`,
+                borderRadius: C.radius,
+                overflow: 'hidden',
+                background: C.bgLayer1,
+              },
+            },
+            options.map((option, index) => {
+              const active = index === currentIndex;
+              return h(
+                'button',
+                {
+                  key: `${typeof option.value}:${JSON.stringify(option.value)}`,
+                  type: 'button',
+                  'aria-pressed': active,
+                  disabled: off,
+                  ...focusable,
+                  style: {
+                    appearance: 'none',
+                    border: 'none',
+                    borderLeft: index === 0 ? 'none' : `1px solid ${C.border}`,
+                    background: active ? ORANGE : 'transparent',
+                    color: active ? '#fff' : C.label2,
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    cursor: off ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap',
+                    opacity: off ? 0.6 : 1,
+                    outline: '2px solid transparent',
+                  },
+                  onClick: () => {
+                    setDraft(option.value);
+                    commit(option.value);
+                  },
+                },
+                option.zh ?? option.description ?? String(option.value),
+              );
+            }),
+          );
+        }
+        return h(
+          'select',
+          {
+            'aria-label': label,
+            ...focusable,
+            value: currentIndex < 0 ? '' : String(currentIndex),
+            disabled: off,
+            style: btn({ padding: '6px 8px', minWidth: 130 }),
+            onChange: (e) => {
+              const index = Number(e.target.value);
+              const hit = options[index];
+              if (!hit) return;
+              setDraft(hit.value);
+              commit(hit.value);
+            },
+          },
+          options.map((option, index) => h('option', {
+            key: `${typeof option.value}:${JSON.stringify(option.value)}`,
+            value: String(index),
+          }, option.zh ?? option.description ?? String(option.value))),
+        );
+      }
+
+      if (cap.kind === 'range') {
+        const range = Array.isArray(cap.range) ? { min: cap.range[0], max: cap.range[1], step: cap.range[2] }
+          : cap.range && typeof cap.range === 'object' ? cap.range : {};
+        const minValue = cap.min ?? range.min;
+        const maxValue = cap.max ?? range.max;
+        const stepValue = cap.step ?? range.step;
+        const min = Number.isFinite(minValue) ? minValue : 0;
+        const max = Number.isFinite(maxValue) ? maxValue : 100;
+        const step = Number.isFinite(stepValue) && stepValue > 0 ? stepValue : 1;
+        const number = Number(draft);
+        const current = Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : min;
+        const unit = cap.unit || '';
+        return h(
+          'div',
+          { style: { display: 'inline-flex', alignItems: 'center', gap: 8 } },
+          h('input', {
+            type: 'range',
+            'aria-label': label,
+            ...focusable,
+            min,
+            max,
+            step,
+            value: current,
+            disabled: off,
+            onChange: (e) => setDraft(e.target.value),
+            onMouseUp: (e) => commit(Number(e.target.value)),
+            onTouchEnd: (e) => commit(Number(e.target.value)),
+            onKeyUp: (e) => {
+              if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(e.key))
+                commit(Number(e.target.value));
+            },
+            style: { width: 120, accentColor: ORANGE },
+          }),
+          h(
+            'span',
+            { style: { minWidth: 48, fontSize: 13, color: C.label, textAlign: 'right' } },
+            `${value === undefined || value === null ? '—' : value}${unit}`,
+          ),
+        );
+      }
+
+      if (cap.writable === false || cap.kind === 'json') {
+        return h('pre', { 'aria-label': label, style: { ...muted, margin: 0, maxWidth: 360, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } },
+          value === undefined || value === null ? t('unknown') : typeof value === 'object' ? JSON.stringify(value) : String(value));
+      }
+
+      // 其它：输入框 + 确定
+      return h(
+        'div',
+        { style: { display: 'inline-flex', alignItems: 'center', gap: 6 } },
+        h('input', {
+          type: 'text',
+          'aria-label': label,
+          ...focusable,
+          value: draft,
+          disabled: off,
+          onChange: (e) => setDraft(e.target.value),
+          onKeyDown: (e) => {
+            if (e.key === 'Enter' && draft !== '') commit(draft);
+          },
+          style: btn({ width: 110, padding: '5px 8px' }),
+        }),
+        h(
+          'button',
+          { type: 'button', ...focusable, disabled: off, style: btn(), onClick: () => draft !== '' && commit(draft) },
+          t('write'),
+        ),
+      );
+    }
+
+    /** 带占位符的文案：tf(t,'shScanDone',{n:3})。 */
+    function tf(t, key, params) {
+      const raw = t(key);
+      return String(raw).replace(/\{(\w+)\}/g, (_, name) => (params?.[name] !== undefined ? String(params[name]) : `{${name}}`));
+    }
+
     function Panel({ t }) {
       const [status, setStatus] = useState(null);
       const [ready, setReady] = useState(false);
       const [error, setError] = useState('');
+      const [resourceErrors, setResourceErrors] = useState({});
+      const [resourceBusy, setResourceBusy] = useState(false);
 
       const [devices, setDevices] = useState([]);
       const [homes, setHomes] = useState([]);
@@ -1454,6 +2517,8 @@ window.__ModuleLoader__.load({
 
       const load = useCallback(async () => {
         setError('');
+        setResourceErrors({});
+        setResourceBusy(true);
         setReady(false);
         let state = null;
         try {
@@ -1461,6 +2526,7 @@ window.__ModuleLoader__.load({
           setStatus(state);
         } catch (err) {
           setError(err?.body?.error ?? err.message ?? String(err));
+          setResourceBusy(false);
           setReady(true);
           return;
         }
@@ -1468,12 +2534,15 @@ window.__ModuleLoader__.load({
           setReady(true);
           return;
         }
-        const [dev, home, scene, cons] = await Promise.all([
-          getJSON('devices').catch(() => ({ devices: [] })),
-          getJSON('homes').catch(() => ({ homes: [] })),
-          getJSON('scenes').catch(() => ({ scenes: [] })),
-          getJSON('consumables').catch(() => ({ items: [], low_count: 0 })),
-        ]);
+        const resources = ['devices', 'homes', 'scenes', 'consumables'];
+        const results = await Promise.all(resources.map(async (resource) => {
+          try { return [resource, await getJSON(resource), '']; }
+          catch (err) { return [resource, {}, err?.body?.error ?? err.message ?? String(err)]; }
+        }));
+        const data = Object.fromEntries(results.map(([resource, result]) => [resource, result]));
+        const failures = Object.fromEntries(results.filter(([, , message]) => message).map(([resource, , message]) => [resource, message]));
+        setResourceErrors(failures);
+        const dev = data.devices ?? {}, home = data.homes ?? {}, scene = data.scenes ?? {}, cons = data.consumables ?? {};
         const list = Array.isArray(dev.devices) ? dev.devices : [];
         setDevices(list);
         setHomes(Array.isArray(home.homes) ? home.homes : []);
@@ -1505,6 +2574,7 @@ window.__ModuleLoader__.load({
           }
         }
 
+        setResourceBusy(false);
         setReady(true);
       }, []);
 
@@ -2054,6 +3124,10 @@ window.__ModuleLoader__.load({
         { style: PAGE },
         header,
         tabBar,
+        Object.keys(resourceErrors).length ? h('div', { role: 'alert', style: { ...card, padding: 12, marginTop: 10, color: C.error } },
+          Object.entries(resourceErrors).map(([resource, message]) => h('div', { key: resource }, `${resource}: ${message}`)),
+          h('button', { type: 'button', ...focusable, style: btn({ marginTop: 8 }), disabled: resourceBusy, onClick: load }, t('retry')),
+        ) : null,
         tab === 'devices'
           ? h(
               'div',
@@ -2089,8 +3163,64 @@ window.__ModuleLoader__.load({
 
     /* -------------------------------------------------------------- 注册 */
 
+    /**
+     * 面板外壳：两页签（米家 / 全屋）。
+     *
+     * 为什么合并成一个面板而不是两个侧栏项：两者是同一件事的两个层次
+     * （账号内的米家设备 vs 局域网里的所有设备），分开放用户还得记住
+     * 哪个设备在哪个页签。外壳只负责切页，各页自己取数。
+     */
     function Shell({ t }) {
-      return h(Panel, { t });
+      const [view, setView] = useState('smart');
+      const tab = (id, label) =>
+        h(
+          'button',
+          {
+            key: id,
+            type: 'button',
+            role: 'tab',
+            'aria-selected': view === id,
+            onClick: () => setView(id),
+            ...focusable,
+            style: {
+              appearance: 'none',
+              border: `1px solid ${view === id ? ORANGE : C.border}`,
+              background: view === id ? 'rgba(255,106,0,.10)' : C.bgBase,
+              color: view === id ? ORANGE : C.label2,
+              borderRadius: C.radius,
+              padding: '5px 14px',
+              fontSize: 12,
+              fontWeight: view === id ? 600 : 400,
+              cursor: 'pointer',
+              outline: '2px solid transparent',
+            },
+          },
+          label,
+        );
+
+      return h(
+        'div',
+        { style: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 } },
+        h(
+          'div',
+          {
+            role: 'tablist',
+            style: {
+              display: 'flex',
+              gap: 8,
+              padding: '12px 20px 0',
+              flex: '0 0 auto',
+            },
+          },
+          tab('mihome', t('shTabMihome')),
+          tab('smart', t('shTabSmart')),
+        ),
+        h(
+          'div',
+          { style: { flex: '1 1 auto', minHeight: 0, display: 'flex' } },
+          view === 'mihome' ? h(Panel, { t }) : h(SmartHomePanel, { t }),
+        ),
+      );
     }
 
     return {
@@ -2124,7 +3254,7 @@ window.__ModuleLoader__.load({
                     name: 'sidebar.panellist',
                     id: PANEL_ID,
                     order: 8,
-                    label: () => t('nav'),
+                    label: () => t('shNav'),
                     locale: NS,
                   },
                   (owner = {}) =>

@@ -1,0 +1,4 @@
+# Local discovery/control extensions; missing packages skip that transport.
+tinytuya>=1.21.1,<2
+zeroconf>=0.154,<1
+bleak>=1,<3

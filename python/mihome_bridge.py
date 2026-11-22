@@ -8,7 +8,7 @@ DSH 插件本体是 Node，米家协议栈是 Python（mijiaAPI）。本文件�
 构造既慢又会重复读盘）。
 
 为什么不复用 app/ui：整个 app.ui 与 app.core.jobs 都 import PySide6，
-而米家控制本身并不需要 Qt。只 import app.core.service 就能完整控制设备，
+而米家控制本身并不需要 Qt。通过 app.core.service 调用已适配的米家能力，
 也让插件不必为插件本体拖一份 200MB 的 Qt 运行时。
 
 日志一律走 stderr——stdout 是协议通道，任何多余字符都会让 Node 侧
@@ -17,9 +17,11 @@ JSON.parse 失败。
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 from dataclasses import asdict, is_dataclass
@@ -54,8 +56,6 @@ _service_auth_mtime: float = 0.0
 def _auth_file() -> Path | None:
     """mijiaAPI 的凭据文件路径（与 mijiaAPI CLI 共用）。"""
     try:
-        from mijiaAPI import mijiaLogin  # noqa: F401  (仅用于确认包未损坏)
-
         return Path.home() / ".config" / "mijia-api" / "auth.json"
     except Exception:  # noqa: BLE001 - 拿不到就以 mtime 0 处理，不阻断主流程
         return None
@@ -98,6 +98,8 @@ def _plain(value):
 
 def _err_code(exc: BaseException) -> str:
     """给异常一个稳定的机器可读分类，Node 侧据此决定要不要引导用户登录。"""
+    if isinstance(exc, OperationTimeout):
+        return "operation_timeout"
     name = type(exc).__name__
     text = str(exc)
     if "ServiceError" in name:
@@ -109,6 +111,88 @@ def _err_code(exc: BaseException) -> str:
     if isinstance(exc, OSError):
         return "io_error"
     return "error"
+
+
+# ---------------------------------------------------------------- 全屋智能家居
+
+# 局域网扫描/控制是 asyncio 写的，而桥接主循环是同步逐行读 stdin。这里起一条
+# 常驻后台事件循环线程，处理函数用 run_coroutine_threadsafe 投递进去等结果。
+# 主循环仍串行等候请求完成；Node 取消/超时时终止桥接，避免继续处理排队请求。
+_loop: asyncio.AbstractEventLoop | None = None
+_loop_lock = threading.Lock()
+_manager: object | None = None
+
+
+def _event_loop() -> asyncio.AbstractEventLoop:
+    global _loop
+    with _loop_lock:
+        if _loop is None:
+            loop = asyncio.new_event_loop()
+            thread = threading.Thread(target=loop.run_forever, daemon=True,
+                                      name="smart-home-loop")
+            thread.start()
+            _loop = loop
+        return _loop
+
+
+class OperationTimeout(TimeoutError):
+    """The shared process must exit: cancellation cannot stop blocking threads."""
+
+
+def _run_async(coro, timeout: float | None = None):
+    async def capture_device_timeout():
+        try:
+            return await coro, None
+        except TimeoutError as exc:
+            # Future.result also raises TimeoutError for a finished device call.
+            # Carry that exception as data so it cannot be confused with our budget.
+            return None, exc
+
+    future = asyncio.run_coroutine_threadsafe(capture_device_timeout(), _event_loop())
+    try:
+        result, device_timeout = future.result(timeout=timeout)
+    except TimeoutError:
+        # Cancellation cannot interrupt a blocking cloud call or to_thread worker.
+        # The dispatcher marks this process terminal; main exits without joining
+        # workers and Node invalidates every queued request. Remote effects remain unknown.
+        future.cancel()
+        raise OperationTimeout("操作超时，执行结果未知；请先读取设备状态，再决定是否重试") from None
+    if device_timeout is not None:
+        raise device_timeout
+    return result
+
+
+def smart_home_manager():
+    """懒构造全屋智能家居管理器（米家云为可选，失败则仅走局域网）。"""
+    global _manager
+    if _manager is None:
+        try:
+            from smart_home.cloud import MiHomeCloudProxy
+            from smart_home.manager import SmartHomeManager
+        except ImportError as exc:
+            raise RuntimeError(f"全屋智能家居依赖缺失：{exc}") from exc
+        cloud = None
+        try:
+            cloud = MiHomeCloudProxy(service())
+        except Exception as exc:  # noqa: BLE001 - 未登录/无凭据不该阻断局域网
+            print(f"[smart-home] 米家云端不可用，本次仅用局域网：{exc}", file=sys.stderr)
+        data_dir = os.environ.get("MIHOME_DATA_DIR") or str(_HERE.parent / "data")
+        _manager = SmartHomeManager({"data_dir": data_dir, "cloud": cloud})
+    else:
+        from smart_home.cloud import MiHomeCloudProxy
+        try:
+            current = service()
+            if getattr(_manager.cloud, "_svc", None) is not current:
+                _manager.cloud = MiHomeCloudProxy(current)
+                _manager.config["cloud"] = _manager.cloud
+                # Invalidate adapters which still reference the previous session.
+                _run_async(_manager.close(), timeout=5)
+                _manager._scan = {}
+        except OperationTimeout:
+            raise  # A timed-out worker must not survive in a reusable bridge.
+        except Exception:
+            pass  # Local connections remain usable when Mi Home is unavailable.
+    return _manager
 
 
 # ---------------------------------------------------------------- handlers
@@ -330,13 +414,15 @@ def op_power(args):
     """电源：不带 state 时按当前状态取反。"""
     svc = service()
     did = _require(args, "did")
-    if "state" in args and args["state"] is not None:
-        state = bool(args["state"])
+    if "state" in args:
+        if not isinstance(args["state"], bool):
+            raise ValueError("state 必须为布尔值")
+        state = args["state"]
         svc.set_power_state(did, state)
         return {"on": state}
     current = svc.power_state(did)
-    svc.toggle_power(did, current)
-    return {"on": not bool(current)}
+    state = svc.toggle_power(did, current)
+    return {"on": state}
 
 
 def op_power_states(args):
@@ -352,7 +438,7 @@ def op_power_states(args):
     states = {}
     for did in [str(d) for d in dids]:
         try:
-            states[did] = bool(svc.power_state(did))
+            states[did] = svc.power_state(did)
         except Exception as exc:  # noqa: BLE001 - 单台失败不影响其余
             print(f"读电源状态失败 {did}: {exc}", file=sys.stderr)
     return {"states": states}
@@ -482,6 +568,104 @@ def op_names(args):
     return {"names": names}
 
 
+def op_smart_home_scan(args):
+    """扫描本网段，识别全屋智能家居（含 BLE）并叠加米家云端设备。"""
+    mgr = smart_home_manager()
+    return _run_async(
+        mgr.scan(
+            subnets=args.get("subnets") or None,
+            prefix=args.get("prefix", 24),
+            extra_subnets=args.get("extra_subnets") or None,
+            ports=args.get("ports") or None,
+            scan_ping=args.get("scan_ping", True),
+            force=bool(args.get("force", False)),
+        ),
+        timeout=180,
+    )
+
+
+def op_smart_home_devices(args):
+    """全屋设备列表（默认 60 秒缓存，refresh=True 强制重扫）。"""
+    mgr = smart_home_manager()
+    return {"devices": _run_async(
+        mgr.devices(refresh=bool(args.get("refresh", False))), timeout=180)}
+
+
+def op_smart_home_device(args):
+    """单台设备详情：能力项（已翻译）+ 当前值。"""
+    mgr = smart_home_manager()
+    return _run_async(
+        mgr.device(_require(args, "id"), refresh=bool(args.get("refresh", False))),
+        timeout=180,
+    )
+
+
+def op_smart_home_control(args):
+    """统一控制：mode = power / write / action / scrape。"""
+    mgr = smart_home_manager()
+    return _run_async(
+        mgr.control(
+            _require(args, "device_id"),
+            str(args.get("mode") or "power"),
+            name=str(args.get("name") or ""),
+            value=args.get("value"),
+            params=args.get("params"),
+            **({"state": args["state"]} if "state" in args else {}),
+        ),
+        timeout=180,
+    )
+
+
+def op_smart_home_scrape(args):
+    """扒管理类设备（路由器 / 交换机 / 光猫 / NAS）的设置页。"""
+    mgr = smart_home_manager()
+    return _run_async(mgr.scrape(_require(args, "device_id")), timeout=180)
+
+
+def op_smart_home_scenes(args):
+    """自定义场景：mode = list / save / run / delete。
+
+    之前只实现了 list，Node 侧却声明了四种模式——save/run/delete 会落到
+    「没有返回」的静默路径。这里补齐，并让返回值结构与前端/渲染一致。
+    """
+    mode = str(args.get("mode") or "list")
+    mgr = smart_home_manager()
+    if mode == "list":
+        return {"ok": True, "mode": mode, "scenes": mgr.scenes_list()}
+    if mode == "save":
+        scene = args.get("scene") or args
+        if not isinstance(scene, dict):
+            raise ValueError("mode=save 需要 scene 对象（含 name 与 actions）")
+        saved = mgr.scene_save(scene)
+        return {"ok": True, "mode": mode, "saved": saved, "scenes": mgr.scenes_list()}
+    if mode == "delete":
+        deleted = mgr.scene_delete(_require(args, "scene_id"))
+        return {"ok": deleted, "mode": mode, "deleted": deleted, "scenes": mgr.scenes_list()}
+    if mode == "run":
+        result = _run_async(mgr.scene_run(_require(args, "scene_id")), timeout=180)
+        return {"mode": mode, **result}
+    raise ValueError(f"未知 mode：{mode}（可选 list / save / run / delete）")
+
+
+def op_smart_home_scene_save(args):
+    scene = args.get("scene") or args
+    return smart_home_manager().scene_save(scene)
+
+
+def op_smart_home_scene_delete(args):
+    return {"deleted": smart_home_manager().scene_delete(_require(args, "scene_id"))}
+
+
+def op_smart_home_scene_run(args):
+    mgr = smart_home_manager()
+    return _run_async(mgr.scene_run(_require(args, "scene_id")), timeout=180)
+
+
+def op_smart_home_catalog(_args):
+    """能力项目录（中英对照），供模型与前端使用。"""
+    return smart_home_manager().catalog()
+
+
 HANDLERS = {
     "status": op_status,
     "login_begin": op_login_qr,
@@ -500,6 +684,16 @@ HANDLERS = {
     "icons": op_icons,
     "homes": op_homes,
     "names": op_names,
+    "smart_home_scan": op_smart_home_scan,
+    "smart_home_devices": op_smart_home_devices,
+    "smart_home_device": op_smart_home_device,
+    "smart_home_control": op_smart_home_control,
+    "smart_home_scrape": op_smart_home_scrape,
+    "smart_home_scenes": op_smart_home_scenes,
+    "smart_home_scene_save": op_smart_home_scene_save,
+    "smart_home_scene_delete": op_smart_home_scene_delete,
+    "smart_home_scene_run": op_smart_home_scene_run,
+    "smart_home_catalog": op_smart_home_catalog,
 }
 
 
@@ -517,7 +711,11 @@ def handle(request: dict) -> dict:
     if handler is None:
         return {"id": req_id, "ok": False, "error": f"未知 op：{op}", "code": "unknown_op"}
     try:
-        return {"id": req_id, "ok": True, "result": _plain(handler(request.get("args") or {}))}
+        args = dict(request.get("args") or {})
+        connections = args.pop("_connections", {})
+        if op.startswith("smart_home_"):
+            _run_async(smart_home_manager().set_connections(connections), timeout=10)
+        return {"id": req_id, "ok": True, "result": _plain(handler(args))}
     except BaseException as exc:  # noqa: BLE001 - 顶点不能崩，错误要回给调用方
         traceback.print_exc(file=sys.stderr)
         return {
@@ -545,6 +743,10 @@ def main() -> int:
         response = handle(request)
         sys.stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
         sys.stdout.flush()
+        if response.get("code") == "operation_timeout":
+            # Normal interpreter shutdown waits for executor threads. Force this
+            # dedicated bridge process to exit before accepting another request.
+            os._exit(124)
     return 0
 
 

@@ -1,0 +1,5 @@
+# Core bridge, Mi Home, HTTP adapters and miIO crypto
+mijiaAPI>=5.0,<6
+qrcode[pil]>=8,<9
+requests>=2.32,<3
+pycryptodome>=3.19,<5

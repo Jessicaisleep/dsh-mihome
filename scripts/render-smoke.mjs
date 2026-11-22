@@ -1,10 +1,7 @@
 /**
- * 前端冒烟：用最小 React 替身把 client.js 真正渲染成 HTML 字符串。
- *
- * 为什么需要它：DSH 的插件前端 bundle 走 dsh-app:// 协议，HTTP 探测恒 404，
- * 也没法在宿主窗口里点按钮。所以这里自己实现 createElement + hooks，
- * 把面板渲染两遍（首页 → 点设备进详情页），把 undefined 变量、错误的 hook
- * 调用、NaN 样式之类的问题在 Node 里就暴露出来。
+ * 模拟渲染契约冒烟：fake React/hooks + fake HTTP，检查六条页面路径。
+ * 输出仅供离线诊断，不证明真实 React、宿主挂载、布局或辅助技术行为。
+ * 用法：node scripts/render-smoke.mjs client.js
  */
 import { mkdirSync, readFileSync } from "node:fs";
 import vm from "node:vm";
@@ -236,8 +233,101 @@ const AC_PROPS = [
   { name: "ac-state", desc: "空调状态", type: "string", readable: true, writable: false, range: null, value_list: null, unit: "", advanced: true },
 ];
 
+/* 全屋智能：局域网发现的设备（不需要米家登录） */
+const SMART_DEVICES = [
+  {
+    id: "shelly:192.168.0.21",
+    name: "走廊灯",
+    model: "SHELLY2",
+    category: "light",
+    category_zh: "灯具",
+    protocol: "shelly",
+    ip: "192.168.0.21",
+    online: true,
+    source: "lan",
+  },
+  {
+    id: "router:192.168.0.1",
+    name: "主路由",
+    model: "TL-7DR7230",
+    category: "router",
+    category_zh: "路由器",
+    protocol: "router",
+    ip: "192.168.0.1",
+    online: true,
+    source: "lan",
+  },
+  {
+    id: "mihome:917079910",
+    name: "空调插座",
+    model: "lumi.acpartner.mcn02",
+    category: "plug",
+    category_zh: "插座",
+    protocol: "mihome",
+    ip: "",
+    online: true,
+    source: "cloud",
+  },
+];
+
+const SMART_DETAIL = {
+  id: "shelly:192.168.0.21",
+  name: "走廊灯",
+  category_zh: "灯具",
+  protocol: "shelly",
+  ip: "192.168.0.21",
+  controls: [
+    { key: "power", name: "power", zh: "开关", en: "Power", kind: "bool", writable: true },
+    {
+      key: "brightness",
+      name: "brightness",
+      zh: "亮度",
+      en: "Brightness",
+      kind: "range",
+      writable: true,
+      min: 0,
+      max: 100,
+      step: 1,
+      unit: "%",
+    },
+    {
+      key: "mode",
+      name: "mode",
+      zh: "模式",
+      en: "Mode",
+      kind: "enum",
+      writable: true,
+      values: [
+        { value: "auto", zh: "自动" },
+        { value: "cool", zh: "制冷" },
+        { value: "heat", zh: "制热" },
+      ],
+    },
+  ],
+  values: { power: true, brightness: 60, mode: "auto" },
+};
+
+const SMART_SCENES = [
+  {
+    id: "sc1",
+    name: "回家模式",
+    enabled: true,
+    actions: [
+      { device: "shelly:192.168.0.21", mode: "power", state: true },
+      { device: "shelly:192.168.0.21", mode: "write", name: "brightness", value: 80 },
+    ],
+  },
+];
+
 const ROUTES = (url) => {
   const u = String(url);
+  // 全屋智能路由必须排在米家前面："/smart-home/devices" 也包含 "/devices"，
+  // 顺序反了会被米家的设备分支抢先命中。
+  if (u.includes("/smart-home/scan")) return { ok: true, devices: SMART_DEVICES };
+  if (u.includes("/smart-home/devices")) return { ok: true, devices: SMART_DEVICES };
+  if (u.includes("/smart-home/scenes")) return { ok: true, scenes: SMART_SCENES };
+  if (u.includes("/smart-home/device?")) return { ok: true, detail: SMART_DETAIL };
+  if (u.includes("/smart-home/control")) return { ok: true, result: { ok: true } };
   if (u.includes("/status")) return { ok: true, logged_in: true, api_version: "5.0.0" };
   if (u.includes("/devices")) return { ok: true, devices: DEVICES };
   if (u.includes("/homes"))
@@ -414,26 +504,39 @@ const t = (k) => (Object.prototype.hasOwnProperty.call(ZH, k) ? ZH[k] : k);
 const fs = await import("node:fs");
 
 let html = await renderTree(slots.mains[0].component({ t }), "root");
+// 全屋现在是默认入口；先验证默认页，再显式导航到米家跑原有四条路径。
+const defaultSmartMissing = ["全屋智能", "走廊灯", "主路由"].filter((x) => !html.includes(x));
+const mihomeTab = rendered.find((n) => n.props?.role === "tab" && n.children?.[0] === ZH.shTabMihome);
+if (!mihomeTab) throw new Error("米家外壳页签未渲染");
+await mihomeTab.props.onClick();
+html = await renderTree(slots.mains[0].component({ t }), "root");
 const need = ["我的家", "卧室", "客厅", "空调插座", "小米智能门铃3", "离线", "已开启"];
 const missing = need.filter((x) => !html.includes(x));
 fs.writeFileSync("scripts/.out/out1.html", html);
 console.log("pass1 len:", html.length, "缺失:", JSON.stringify(missing));
 
 // 首页的页签节点要在点进设备前抓住：点进去之后 openDevice 有值，重渲染就是详情页了。
-const homeTabs = rendered.filter((n) => n.props?.role === "tab" && typeof n.props.onClick === "function");
-console.log("首页页签数:", homeTabs.length);
+// 外壳（Shell）现在在最外层放了「米家 / 全屋」两个页签，它们也是 role="tab"，
+// 这里按标签文案把它们排除掉，剩下的才是米家面板自己的「设备 / 场景 / 耗材」。
+const shellLabels = new Set([ZH.shTabMihome ?? "米家", ZH.shTabSmart ?? "全屋"]);
+const allTabs = rendered.filter((n) => n.props?.role === "tab" && typeof n.props.onClick === "function");
+const tabLabel = (n) => String(n.children?.[0] ?? "");
+const shellTabs = allTabs.filter((n) => shellLabels.has(tabLabel(n)));
+const homeTabs = allTabs.filter((n) => !shellLabels.has(tabLabel(n)));
+console.log("首页页签数:", homeTabs.length, "(外壳页签:", shellTabs.length, ")");
 
 const tiles = rendered.filter((n) => n.props?.role === "button" && typeof n.props.onClick === "function");
 console.log("可点击磁贴数:", tiles.length);
 
 let detailHtml = "";
+let missing2 = ["米家设备详情未打开"];
 if (tiles.length) {
   // 点第一台（空调插座）
   await tiles[0].props.onClick();
   detailHtml = await renderTree(slots.mains[0].component({ t }), "root");
   fs.writeFileSync("scripts/.out/out2.html", detailHtml);
   const need2 = ["电源", "常用", "模式", "制冷", "目标温度", "风速", "当前状态", "电功率", "更多操作", "设置空调型号", "高级设置", "返回"];
-  const missing2 = need2.filter((x) => !detailHtml.includes(x));
+  missing2 = need2.filter((x) => !detailHtml.includes(x));
   console.log("pass2 len:", detailHtml.length, "缺失:", JSON.stringify(missing2));
 }
 
@@ -482,7 +585,64 @@ if (tabs.length === 3) {
 const bad2 = /undefined|NaN|\[object Object\]/.test(sceneHtml + consHtml);
 console.log("页签含 undefined/NaN/[object Object]:", bad2);
 
+/* ------------------------------------------- 外壳：切到「全屋」智能面板 */
+
+let smartHtml = "";
+let smartDetailHtml = "";
+let smartMissing = ["外壳页签未渲染"];
+
+const smartTab = shellTabs.find((n) => tabLabel(n) === (ZH.shTabSmart ?? "全屋"));
+if (smartTab) {
+  await smartTab.props.onClick();
+  smartHtml = await renderTree(slots.mains[0].component({ t }), "root");
+  fs.writeFileSync("scripts/.out/out5.html", smartHtml);
+
+  // 全屋设备按类别分组：灯具 / 路由器 / 插座（来自云端米家设备）
+  const need5 = ["走廊灯", "主路由", "空调插座", "灯具", "路由器", "插座", "shelly", "192.168.0.21"];
+  smartMissing = need5.filter((x) => !smartHtml.includes(x));
+
+  // 点开一台局域网设备看详情（能力项带中文名 + 当前值）
+  // 磁贴是 h('button', {...}, h('div', {...}, name), ...)，名字在嵌套子节点里，
+  // 这里递归取文本再匹配，别只看第一层。
+  const textOf = (node) => {
+    if (node === null || node === undefined || typeof node === "boolean") return "";
+    if (typeof node === "string" || typeof node === "number") return String(node);
+    if (Array.isArray(node)) return node.map(textOf).join("");
+    const kids = node.children ?? [];
+    return kids.map(textOf).join("");
+  };
+  const smartTiles = rendered.filter(
+    (n) =>
+      n.tag === "button" &&
+      typeof n.props?.onClick === "function" &&
+      textOf(n).includes("走廊灯"),
+  );
+  const tile = smartTiles[0];
+  if (tile) {
+    await tile.props.onClick();
+    smartDetailHtml = await renderTree(slots.mains[0].component({ t }), "root");
+    fs.writeFileSync("scripts/.out/out6.html", smartDetailHtml);
+    const need6 = ["走廊灯", "开关", "亮度", "模式", "自动", "制冷", "id=shelly:192.168.0.21", "key=power", "writable=true"];
+    smartMissing = smartMissing.concat(need6.filter((x) => !smartDetailHtml.includes(x)));
+  } else {
+    smartMissing.push("全屋设备磁贴不可点击");
+  }
+}
+console.log(
+  "pass5/6 全屋页 len:",
+  smartHtml.length,
+  "/",
+  smartDetailHtml.length,
+  "缺失:",
+  JSON.stringify(smartMissing),
+);
+
+const bad3 = /undefined|NaN|\[object Object\]/.test(smartHtml + smartDetailHtml);
+console.log("全屋页含 undefined/NaN/[object Object]:", bad3);
+
 const missing34 = globalThis.__missing34 ?? ["页签未渲染"];
-const ok = !bad && !bad2 && !missing.length && !missing34.length && detailHtml.length > 0;
+const ok =
+  !bad && !bad2 && !bad3 && !defaultSmartMissing.length && !missing.length &&
+  !missing2.length && !missing34.length && !smartMissing.length && detailHtml.length > 0;
 console.log(ok ? "SMOKE OK" : "SMOKE FAIL");
 process.exit(ok ? 0 : 1);

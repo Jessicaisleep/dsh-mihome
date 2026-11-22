@@ -9,6 +9,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
+import { mkdtempSync, rmSync, writeFileSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { Bridge } from "../lib/bridge.js";
@@ -88,6 +90,56 @@ test("缺参数报错带中文说明", async () => {
       () => bridge.request("read_props", { did: "x" }),
       (error) => /names/.test(error.message),
     );
+  } finally {
+    bridge.dispose();
+  }
+});
+
+test("aborting an in-flight request terminates its Python bridge", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "dsh-mihome-abort-"));
+  const marker = join(dir, "late-write.txt");
+  const script = join(dir, "fake_bridge.py");
+  writeFileSync(script, [
+    "import json, sys, time",
+    "for line in sys.stdin:",
+    " req = json.loads(line)",
+    " if req['op'] == 'slow':",
+    "  time.sleep(0.25)",
+    "  open(r'" + marker.replaceAll("\\", "\\\\") + "', 'w').write('late')",
+    " print(json.dumps({'id':req['id'],'ok':True,'result':{}}), flush=True)",
+  ].join("\n"));
+  const bridge = new Bridge({ pythonExe: PYTHON, script, dataDir: dir, cwd: dir });
+  const controller = new AbortController();
+  try {
+    const request = bridge.request("slow", {}, 2000, controller.signal);
+    setTimeout(() => controller.abort(), 30);
+    await assert.rejects(request, (error) => error.name === "AbortError");
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    assert.equal(existsSync(marker), false);
+  } finally {
+    bridge.dispose();
+  }
+});
+
+test("stdout and stderr UTF-8 decoders do not share partial characters", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "dsh-mihome-utf8-"));
+  const script = join(dir, "fake_bridge.py");
+  writeFileSync(script, [
+    "import json, os, sys, time",
+    "req=json.loads(sys.stdin.readline())",
+    "line=json.dumps({'id':req['id'],'ok':True,'result':{'text':'中'}}, ensure_ascii=False).encode()",
+    "mark='中'.encode()",
+    "at=line.index(mark)",
+    "os.write(1, line[:at+1])",
+    "time.sleep(0.04)",
+    "os.write(2, b'log\\n')",
+    "time.sleep(0.04)",
+    "os.write(1, line[at+1:]+b'\\n')",
+  ].join("\n"));
+  const bridge = new Bridge({ pythonExe: PYTHON, script, dataDir: dir, cwd: dir });
+  try {
+    const result = await bridge.request("utf8", {}, 2000);
+    assert.equal(result.text, "中");
   } finally {
     bridge.dispose();
   }

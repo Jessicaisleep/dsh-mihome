@@ -8,8 +8,8 @@
         # 桥接用的 Python 解释器。留空 = 插件自带的 .venv
         # （Windows: .venv\Scripts\python.exe；其它平台: .venv/bin/python）
         pythonPath: ''
-        # 米家缓存与配置目录。留空 = <插件目录>/data
-        # （登录凭据本身由 mijiaAPI 存在 ~/.config/mijia-api/auth.json，不在这里）
+        # 运行时数据目录（二维码、产品图、自定义场景）。留空 = <插件目录>/data
+        # （米家登录凭据由 mijiaAPI 存在 ~/.config/mijia-api/auth.json，不在这里）
         dataDir: ''
         # 普通设备操作的请求超时（毫秒）
         requestTimeoutMs: 30000
